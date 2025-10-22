@@ -37,11 +37,11 @@ class HFModel(BaseLLM):
  
 
 class OpenRouterModel(BaseLLM):
-    def __init__(self, model="openai/gpt-5", base_url="https://api2.aigcbest.top/v1", extra_headers=None, extra_body=None, max_retries: int = 2):
+    def __init__(self, model="gpt-4o-mini", base_url="", api_key="", extra_headers=None, extra_body=None, max_retries: int = 2):
         from openai import OpenAI
         self.client = OpenAI(
             base_url=base_url,
-            api_key='',
+            api_key=api_key,
         )
         self.model = model
         self.max_retries = max_retries
