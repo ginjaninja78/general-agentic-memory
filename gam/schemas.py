@@ -29,6 +29,11 @@ class Page(BaseModel):
     header: str = Field(..., description="Page header")
     content: str = Field(..., description="Page content")
     meta: Dict[str, Any] = Field(default_factory=dict, description="Metadata")
+    
+    @staticmethod
+    def equal(page1: 'Page', page2: 'Page') -> bool:
+        """判断两个 Page 是否相等"""
+        return page1 == page2
 
 class MemoryUpdate(BaseModel):
     """Memory update result"""
