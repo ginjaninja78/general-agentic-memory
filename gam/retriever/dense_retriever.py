@@ -17,20 +17,20 @@ class DenseRetriever(AbsRetriever):
         self.index = None
         self.doc_emb = None
         self.model = FlagAutoModel.from_finetuned(
-            config.model_name,
-            normalize_embeddings=config.normalize_embeddings,
-            pooling_method=config.pooling_method,
-            trust_remote_code=config.trust_remote_code,
-            query_instruction_for_retrieval=config.query_instruction_for_retrieval,
-            use_fp16=config.use_fp16,
-            devices=config.devices
+            config.get("model_name"),
+            normalize_embeddings=config.get("normalize_embeddings", True),
+            pooling_method=config.get("pooling_method", "cls"),
+            trust_remote_code=config.get("trust_remote_code", True),
+            query_instruction_for_retrieval=config.get("query_instruction_for_retrieval"),
+            use_fp16=config.get("use_fp16", False),
+            devices=config.get("devices", "cuda")
         )
 
     def search(self, query_list: List[str], top_k: int = 10) -> List[List[Hit]]:
         queries_emb = self.model.encode_queries(
             query_list, 
-            batch_size=self.config.batch_size,
-            max_length=self.config.max_length
+            batch_size=self.config.get("batch_size", 32),
+            max_length=self.config.get("max_length", 512)
         )
         scores, indices = search(self.index, queries_emb, top_k)
         results = []
@@ -47,7 +47,7 @@ class DenseRetriever(AbsRetriever):
         return results
 
     def load(self):
-        index_dir = self.config.index_dir
+        index_dir = self.config.get("index_dir")
         try:
             self.doc_emb = np.load(os.path.join(index_dir, 'doc_emb.npy'))
             self.index = faiss_index(self.doc_emb)
@@ -56,13 +56,13 @@ class DenseRetriever(AbsRetriever):
             print('cannot load index, error: ', e)
 
     def build(self, page_store: InMemoryPageStore):
+        index_dir = self.config.get("index_dir")
         os.makedirs(os.path.join(index_dir, "pages"), exist_ok=True)
 
         self.pages = page_store.list_all()
         self.doc_emb = self.model.encode_corpus([(page.header + ' ' + page.content).strip() for page in self.pages])
         self.index = faiss_index(self.doc_emb)
 
-        index_dir = self.config.index_dir
         page_store.save(os.path.join(index_dir, "pages"))
         np.save(os.path.join(index_dir, 'doc_emb.npy'), self.doc_emb)
     
@@ -85,8 +85,8 @@ class DenseRetriever(AbsRetriever):
 
             self.index = faiss_index(self.doc_emb)
             self.pages = page_store.list_all()
-            page_store.save(os.path.join(self.config.index_dir, "pages"))
-            np.save(os.path.join(self.config.index_dir, 'doc_emb.npy'), self.doc_emb)
+            page_store.save(os.path.join(self.config.get("index_dir"), "pages"))
+            np.save(os.path.join(self.config.get("index_dir"), 'doc_emb.npy'), self.doc_emb)
         else:
             print('no new pages to update')
 

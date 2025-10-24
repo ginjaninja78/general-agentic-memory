@@ -16,7 +16,7 @@ class BM25Retriever(AbsRetriever):
     def search(self, query_list: List[str], top_k: int = 10) -> List[List[Hit]]:
         results = []
         for query in query_list:
-            hits = self.index_dict.search(query, k=top_k)
+            hits = self.index.search(query, k=top_k)
             tmp_results = {}
             for i in range(len(hits)):
                 tmp_results[hits[i].docid] = {
@@ -26,7 +26,7 @@ class BM25Retriever(AbsRetriever):
                         page_index=self.pages[int(hits[i].docid)].page_id,
                         snippet=self.pages[int(hits[i].docid)].content[:200],
                         source="keyword",
-                        meta={"rank": i, "score": score[i]}
+                        meta={"rank": i, "score": hits[i].score}
                     )
                 }
             cur_scores = sorted(tmp_results.items(), key=lambda x: x[1]['score'], reverse=True)[:top_k]
@@ -64,7 +64,7 @@ class BM25Retriever(AbsRetriever):
             --input {os.path.join(index_dir, "index")} \
             --index {os.path.join(index_dir, "documents")} \
             --generator DefaultLuceneDocumentGenerator \
-            --threads {self.config.threads} \
+            --threads {self.config.get("threads", 1)} \
             --storePositions --storeDocvectors --storeRaw"""
 
         exit_code = os.system(command)

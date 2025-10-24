@@ -31,7 +31,7 @@ class IndexRetriever(AbsRetriever):
         return hits
 
     def load(self):
-        index_dir = self.config.index_dir
+        index_dir = self.config.get("index_dir")
         try:
             self.page_store = InMemoryPageStore.load(os.path.join(index_dir, "pages"))
         except Exception as e:
@@ -40,7 +40,7 @@ class IndexRetriever(AbsRetriever):
     def build(self, page_store: InMemoryPageStore):
         self.page_store = page_store
 
-        self.page_store.save(os.path.join(self.config.index_dir, "pages"))
+        self.page_store.save(os.path.join(self.config.get("index_dir"), "pages"))
     
     def update(self, page_store: InMemoryPageStore):
         self.build(page_store)
