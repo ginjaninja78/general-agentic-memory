@@ -1,48 +1,95 @@
+# -*- coding: utf-8 -*-
 """
-General Agentic Memory (GAM) - 通用智能记忆系统
+General Agentic Memory (GAM) Framework
 
-这个包提供了基于记忆的智能代理架构，支持：
-- MemoryAgent: 记忆构建和管理
-- DeepResearchAgent: 深度研究代理
-- 多种LLM后端支持（OpenRouter、HuggingFace等）
+A dual-agent architecture for building long-term memory with deep research capabilities.
+
+Key Components:
+- MemoryAgent: Builds structured memory from raw messages
+- ResearchAgent: Performs multi-iteration research with reflection
 """
 
-from .agents import (
-    MemoryAgent, 
-    DeepResearchAgent
-)
-from .llm_call import BaseLLM, OpenRouterModel, HFModel
-from .utils import (
-    safe_json_extract,
-    build_session_chunks_from_text,
-    build_pages_from_sessions_and_abstracts,
-    tokenize
-)
-from .retrieval import BM25Sessions
-from .prompts import (
-    MemoryAgent_PROMPT,
-    SESSION_SUMMARY_PROMPT,
-    PLANNING_DEEP_RESEARCH_PROMPT,
-    REPLAN_FROM_SESSIONS_PROMPT
+from __future__ import annotations
+
+# Core agents
+from gam.agents import MemoryAgent, ResearchAgent
+
+# Generators
+from gam.generator import AbsGenerator, OpenAIGenerator, VLLMGenerator
+
+# Retrievers
+from gam.retriever import AbsRetriever, IndexRetriever
+
+# 尝试导入可选检索器
+try:
+    from gam.retriever import BM25Retriever
+except ImportError:
+    BM25Retriever = None  # type: ignore
+
+try:
+    from gam.retriever import DenseRetriever
+except ImportError:
+    DenseRetriever = None  # type: ignore
+
+# Configurations
+from gam.config import (
+    OpenAIGeneratorConfig,
+    VLLMGeneratorConfig,
+    DenseRetrieverConfig,
+    BM25RetrieverConfig,
+    IndexRetrieverConfig
 )
 
-__version__ = "1.0.0"
-__author__ = "Your Name"
-__email__ = "your.email@example.com"
+# Schemas
+from gam.schemas import (
+    MemoryState,
+    Page,
+    MemoryUpdate,
+    SearchPlan,
+    Hit,
+    Result,
+    EnoughDecision,
+    ReflectionDecision,
+    ResearchOutput,
+    InMemoryMemoryStore,
+    InMemoryPageStore
+)
 
+__version__ = "0.1.0"
 __all__ = [
+    # Core agents
     "MemoryAgent",
-    "DeepResearchAgent", 
-    "BaseLLM",
-    "OpenRouterModel",
-    "HFModel",
-    "safe_json_extract",
-    "build_session_chunks_from_text",
-    "build_pages_from_sessions_and_abstracts",
-    "tokenize",
-    "BM25Sessions",
-    "MemoryAgent_PROMPT",
-    "SESSION_SUMMARY_PROMPT",
-    "PLANNING_DEEP_RESEARCH_PROMPT",
-    "REPLAN_FROM_SESSIONS_PROMPT"
+    "ResearchAgent",
+    
+    # Generators
+    "AbsGenerator",
+    "OpenAIGenerator",
+    "VLLMGenerator",
+    
+    # Retrievers
+    "AbsRetriever",
+    "IndexRetriever",
+    "BM25Retriever",
+    "DenseRetriever",
+    
+    # Configurations
+    "OpenAIGeneratorConfig",
+    "VLLMGeneratorConfig",
+    "DenseRetrieverConfig",
+    "BM25RetrieverConfig",
+    "IndexRetrieverConfig",
+    
+    # Schemas
+    "MemoryState",
+    "Page",
+    "MemoryUpdate",
+    "SearchPlan",
+    "Hit",
+    "Result",
+    "EnoughDecision",
+    "ReflectionDecision",
+    "ResearchOutput",
+    "InMemoryMemoryStore",
+    "InMemoryPageStore",
 ]
+
