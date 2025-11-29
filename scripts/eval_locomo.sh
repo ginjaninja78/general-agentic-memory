@@ -23,4 +23,3 @@ python3 eval/locomo_test.py \
     --working-api-key "your-openai-api-key" \
     --working-base-url "https://api.openai.com/v1" \
     --working-model "gpt-4o-mini"
-    # --end-idx 10 \
