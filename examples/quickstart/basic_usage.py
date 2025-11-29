@@ -32,9 +32,7 @@ def basic_memory_example():
     # 1. 配置并创建 Generator
     gen_config = OpenAIGeneratorConfig(
         model_name="gpt-4o-mini",
-        # api_key=os.getenv("OPENAI_API_KEY"),  # 从环境变量读取
-        api_key="sk-i7XJ1l5kLoJktEkjGzSjQJcmyAz5cgONof3qARfCZ0paoami",
-        base_url="https://api.key77qiqi.cn/v1",
+        api_key=os.getenv("OPENAI_API_KEY"),  # 从环境变量读取
         temperature=0.3,
         max_tokens=256
     )
@@ -91,10 +89,8 @@ def research_example(memory_store, page_store):
     # 1. 配置并创建 Generator
     gen_config = OpenAIGeneratorConfig(
         model_name="gpt-4o-mini",
-        # api_key=os.getenv("OPENAI_API_KEY"),
-        # base_url="https://api.openai.com/v1",
-        api_key="sk-i7XJ1l5kLoJktEkjGzSjQJcmyAz5cgONof3qARfCZ0paoami",
-        base_url="https://api.key77qiqi.cn/v1",
+        api_key=os.getenv("OPENAI_API_KEY"),
+        base_url="https://api.openai.com/v1",
         temperature=0.3,
         max_tokens=2048
     )
