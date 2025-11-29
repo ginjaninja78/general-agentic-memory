@@ -165,7 +165,7 @@ gen_config = OpenAIGeneratorConfig(
     temperature=0.3,
     max_tokens=256
 )
-generator = OpenAIGenerator(gen_config.__dict__)
+generator = OpenAIGenerator.from_config(gen_config)
 
 # 2. 创建记忆和页面存储
 memory_store = InMemoryMemoryStore()
@@ -254,7 +254,7 @@ research_agent = ResearchAgent(**research_agent_kwargs)
 
 # 7. 执行研究
 research_result = research_agent.research(
-    "机器学习和深度学习有什么区别？"
+    request="机器学习和深度学习有什么区别？"
 )
 research_summary = research_result.integrated_memory
 
