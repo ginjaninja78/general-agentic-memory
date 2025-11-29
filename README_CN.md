@@ -148,22 +148,24 @@ from gam import (
     OpenAIGeneratorConfig,
     InMemoryMemoryStore,
     InMemoryPageStore,
-    IndexRetriever,
-    IndexRetrieverConfig,
-    BM25Retriever,
-    BM25RetrieverConfig,
-    DenseRetriever,
     DenseRetrieverConfig,
+    DenseRetriever,
+    IndexRetrieverConfig,
+    IndexRetriever,
+    BM25RetrieverConfig,
+    BM25Retriever
 )
+
 
 # 1. 配置并创建生成器
 gen_config = OpenAIGeneratorConfig(
     model_name="gpt-4o-mini",
     api_key=os.getenv("OPENAI_API_KEY"),
+    base_url="https://api.openai.com/v1",
     temperature=0.3,
     max_tokens=256
 )
-generator = OpenAIGenerator(gen_config)
+generator = OpenAIGenerator(gen_config.__dict__)
 
 # 2. 创建记忆和页面存储
 memory_store = InMemoryMemoryStore()
@@ -187,11 +189,11 @@ for doc in documents:
     memory_agent.memorize(doc)
 
 # 5. 获取记忆状态
-memory_state = memory_agent.load()
-print(f"构建了 {len(memory_state.abstracts)} 个记忆摘要")
+memory_state = memory_store.load()
+print(f"Built {len(memory_state.abstracts)} memory abstracts")
 
 # 6. 创建 ResearchAgent 进行问答
-retrievers = {}
+retrievers={}
 index_dir = './tmp'
 try:
     page_index_dir = os.path.join(index_dir, "page_index")
@@ -232,7 +234,7 @@ try:
     
     dense_config = DenseRetrieverConfig(
         index_dir=dense_index_dir,
-        model_path="BAAI/bge-m3"
+        model_name="BAAI/bge-m3"
     )
     dense_retriever = DenseRetriever(dense_config.__dict__)
     dense_retriever.build(page_store)
@@ -252,9 +254,8 @@ research_agent = ResearchAgent(**research_agent_kwargs)
 
 # 7. 执行研究
 research_result = research_agent.research(
-    question="机器学习和深度学习有什么区别？"
+    "机器学习和深度学习有什么区别？"
 )
-
 research_summary = research_result.integrated_memory
 
 print(f"[OK] 研究完成！迭代次数: {len(research_result.raw_memory.get('iterations', []))}")
