@@ -5,7 +5,8 @@ from typing import Any, Union, List
 @dataclass
 class DenseRetrieverConfig:
     """密集向量检索器配置"""
-    model_name: str = "BAAI/bge-large-zh-v1.5"
+    model_name: str = "BAAI/bge-m3"
+    model_class: str = "encoder-only-base"
     normalize_embeddings: bool = True
     pooling_method: str = "cls"
     trust_remote_code: bool = True

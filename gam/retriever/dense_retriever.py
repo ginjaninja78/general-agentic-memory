@@ -83,6 +83,7 @@ class DenseRetriever(AbsRetriever):
                 
                 self.model = FlagAutoModel.from_finetuned(
                     model_name,
+                    model_class=config.get("model_class", None),
                     normalize_embeddings=config.get("normalize_embeddings", True),
                     pooling_method=config.get("pooling_method", "cls"),
                     trust_remote_code=config.get("trust_remote_code", True),
